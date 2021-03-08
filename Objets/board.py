@@ -28,6 +28,14 @@ class Board:
                 print(self.board[x][y], end=" ")
             print()
 
+    def start(self):
+        x = (self.size / 2) - 1
+        y = (self.size / 2) - 1
+        self.place(x, y, Pawn(0))
+        self.place(x+1, y, Pawn(1))
+        self.place(x, y+1, Pawn(1))
+        self.place(x+1, y+1, Pawn(0))
+
     def place(self, x, y, pawn):
         #TODO place pawn in a case
         pass
