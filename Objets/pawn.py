@@ -5,3 +5,6 @@ class Pawn:
     def changeColor(self):
         #TODO reverse color
         pass
+
+    def view(self):
+        return "o" if self.color == 0 else "x"
