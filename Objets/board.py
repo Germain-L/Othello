@@ -24,7 +24,10 @@ class Board:
         for x in range(len(self.board)):
             print(nums[x], end=" ")
             for y in range(len(self.board[x])):
-                print(self.board[x][y], end=" ")
+                if (type(self.board[x][y]) == Pawn):
+                    print(self.board[x][y].view(), end=" ")
+                else:
+                    print(self.board[x][y], end=" ")
             print()
 
     def start(self):
@@ -36,13 +39,35 @@ class Board:
         self.place(x+1, y+1, Pawn(0))
 
     def place(self, x, y, pawn):
-        self.board[x][y] = pawn.view()
+        self.board[x][y] = pawn
     
-    def check(self, x, y):
-        #TODO check if pawn eat other pawns
-        pass
-
-    def replace(self, x, y, pawn):
-        #TODO replace pawn by other color
+    def check(self, x, y, pawn):
+        same = []
+        for x in range(len(self.board)):
+            for y in range(len(self.board)):
+                if (type(self.board[x][y]) == Pawn 
+                and self.board[x][y].color == pawn.color):
+                    same.append([x, y])
+        for i in range(len(same)):
+            xs = same[i][0]
+            ys = same[i][1]
+            if (xs == x and ys == y):
+                continue
+            xn = xs - x
+            yn = ys - y
+            if (xs == x):
+                y_min = same[i][1] if (same[i][1] < y) else y
+                y_max = same[i][1] if (same[i][1] > y) else y
+                for j in range(y_min+1, y_max-1):
+                    remplace(x, j)
+            if (ys == y):
+                x_min = same[i][1] if (same[i][1] < x) else x
+                x_max = same[i][1] if (same[i][1] > x) else x
+                for j in range(x_min+1, x_max-1):
+                    remplace(x, y)
+            
+    def replace(self, x, y):
+        if (type(self.board[x][y]) == Pawn):
+            self.board[x][y].changeColor()
         pass
 
