@@ -1,5 +1,6 @@
 from .pawn import Pawn
 
+
 class Board:
     def __init__(self, size):
         self.size = size
@@ -7,15 +8,15 @@ class Board:
         self.start()
 
     def generate(self):
-        #TODO DELETE
+        # TODO DELETE
         self.board = [["•"] * self.size for _ in range(self.size)]
 
     def display(self):
         """Displays the board in a grid"""
-        #TODO DELETE
+        # TODO DELETE
 
-        nums = [i for i in range(1, self.size +1)]
-        
+        nums = [i for i in range(1, self.size + 1)]
+
         print(" ", end="")
         for i in nums:
             print(f" {i}", end="")
@@ -31,18 +32,48 @@ class Board:
         x = (self.size // 2) - 1
         y = (self.size // 2) - 1
         self.place(x, y, Pawn(0))
-        self.place(x+1, y, Pawn(1))
-        self.place(x, y+1, Pawn(1))
-        self.place(x+1, y+1, Pawn(0))
+        self.place(x + 1, y, Pawn(1))
+        self.place(x, y + 1, Pawn(1))
+        self.place(x + 1, y + 1, Pawn(0))
 
     def place(self, x, y, pawn):
         self.board[x][y] = pawn.view()
-    
+
     def check(self, x, y):
-        #TODO check if pawn eat other pawns
+        # TODO check if pawn eat other pawns
         pass
 
     def replace(self, x, y, pawn):
-        #TODO replace pawn by other color
+        # TODO replace pawn by other color
         pass
 
+    def new_pawn(self, pawn):
+        """Lets the user input coordinates to place a pawn"""
+
+        allowed = [i for i in range(0, self.size)]
+
+        y = ""
+        x = ""
+
+        while x not in allowed or y not in allowed:
+            y = input('enter x coordinate for new pawn: ')
+            x = input('enter y coordinate for new pawn: ')
+
+            try:
+                x = int(x) - 1
+                y = int(y) - 1
+
+                if x not in allowed or y not in allowed:
+                    print(f"Please make sure to enter numbers between 1 and {self.size}")
+
+            except ValueError:
+                print(f"Please make sure to enter numbers only")
+
+            if self.board[x][y] in ["x", "o"]:
+                y = ""
+                x = ""
+
+                print("Invalid coordinates pawn already present")
+
+        self.place(x, y, pawn)
+        print(f"Added pawn in {x}, {y}")
