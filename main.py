@@ -1,8 +1,24 @@
 from Objets.board import Board
+from Objets.pawn import Pawn
+
 
 def main():
     board = Board(8)
-    board.display()
+    whose_turn = True
+
+    while True:
+        board.display()
+
+        if whose_turn:
+            print("x's turn")
+            board.new_pawn(Pawn(1))
+
+        else:
+            print("o's turn")
+            board.new_pawn(Pawn(0))
+
+        whose_turn = not whose_turn
+
 
 if __name__ == '__main__':
     main()
