@@ -13,9 +13,14 @@ class Board:
 
     #TODO DELETE
     def display(self):
-        for x in range(self.size):
-            for y in range(self.size):
-                print(self.board[x][y])
+
+    def start(self):
+        x = (self.size / 2) - 1
+        y = (self.size / 2) - 1
+        self.place(x, y, Pawn(0))
+        self.place(x+1, y, Pawn(1))
+        self.place(x, y+1, Pawn(1))
+        self.place(x+1, y+1, Pawn(0))
 
     def place(self, x, y, pawn):
         #TODO place pawn in a case
