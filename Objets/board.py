@@ -1,6 +1,5 @@
 from .pawn import Pawn
 
-
 class Board:
     def __init__(self, size):
         self.size = size
@@ -41,8 +40,9 @@ class Board:
 
     def place(self, x, y, pawn):
         self.board[x][y] = pawn
+        self.check(x, y, pawn)
     
-    def check(self, x, y, pawn):
+    def check(self, func_x, func_y, pawn):
         same = []
         for x in range(len(self.board)):
             for y in range(len(self.board)):
@@ -52,24 +52,27 @@ class Board:
         for i in range(len(same)):
             xs = same[i][0]
             ys = same[i][1]
-            if (xs == x and ys == y):
+            if (xs == func_x and ys == func_y):
                 continue
-            xn = xs - x
-            yn = ys - y
-            if (xs == x):
-                y_min = same[i][1] if (same[i][1] < y) else y
-                y_max = same[i][1] if (same[i][1] > y) else y
-                for j in range(y_min+1, y_max-1):
-                    remplace(x, j)
-            if (ys == y):
-                x_min = same[i][1] if (same[i][1] < x) else x
-                x_max = same[i][1] if (same[i][1] > x) else x
-                for j in range(x_min+1, x_max-1):
-                    remplace(x, y)
+            xn = xs - func_x
+            yn = ys - func_y
+            if (xs == func_x):
+                y_min = same[i][1] if (same[i][1] < func_y) else func_y
+                y_max = same[i][1] if (same[i][1] > func_y) else func_y
+                for j in range(y_min, y_max):
+                    self.replace(func_x, j)
+            if (ys == func_y):
+                x_min = same[i][0] if (same[i][0] < func_x) else func_x
+                x_max = same[i][0] if (same[i][0] > func_x) else func_x
+                for j in range(x_min+1, x_max):
+                    self.replace(j, func_y)
             
     def replace(self, x, y):
         if (type(self.board[x][y]) == Pawn):
             self.board[x][y].changeColor()
+
+    def isEmpty(self, x, y):
+        return False if (type(self.board[x][y]) == Pawn) else True
 
     def new_pawn(self, pawn):
         """Lets the user input coordinates to place a pawn"""
@@ -93,11 +96,10 @@ class Board:
             except ValueError:
                 print(f"Please make sure to enter numbers only")
 
-            if self.board[x][y] in ["x", "o"]:
-                y = ""
-                x = ""
-
-                print("Invalid coordinates pawn already present")
+        while not self.isEmpty(x, y):
+            print("Invalid coordinates pawn already present")
+            y = input('enter x coordinate for new pawn: ')
+            x = input('enter y coordinate for new pawn: ')
 
         self.place(x, y, pawn)
         print(f"Added pawn in {x}, {y}")

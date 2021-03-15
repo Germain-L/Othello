@@ -4,9 +4,9 @@ class Pawn:
 
     def changeColor(self):
         if (self.color == 0):
-            self.color == 1
+            self.color = 1
         else:
-            self.color == 0
+            self.color = 0
 
     def view(self):
         return "o" if self.color == 0 else "x"
