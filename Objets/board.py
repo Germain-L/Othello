@@ -103,3 +103,48 @@ class Board:
 
         self.place(x, y, pawn)
         print(f"Added pawn in {x}, {y}")
+
+    def check_end(self):
+        contains_white = False
+        contains_black = False
+
+        white_count = 0
+        black_count = 0
+
+        full = True
+
+        for x in range(len(self.board)):
+            if "•" in self.board[x]:
+                full = False
+            for y in range(len(self.board[x])):
+                current_pawn = self.board[x][y]
+                if type(current_pawn) == Pawn:
+                    if current_pawn.color == 0:
+                        white_count += 1
+                        contains_white = True
+
+                    elif current_pawn.color == 1:
+                        black_count += 1
+                        contains_black = True
+
+        if contains_white and not contains_black:
+            print("Blanc gagne")
+            return True
+
+        elif contains_black and not contains_white:
+            print("Noir gagne")
+            return True
+
+        elif full:
+            if contains_white > contains_black:
+                print("Blanc gagne")
+                return True
+
+            elif contains_black > contains_white:
+                print("Noir gagne")
+                return True
+
+            else:
+                print("Execo")
+                return True
+        return False
