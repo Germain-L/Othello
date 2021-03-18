@@ -1,34 +1,47 @@
 from .pawn import Pawn
 
+
 class Board:
     def __init__(self, size):
         self.size = size
         self.generate()
         self.start()
 
+    @property
+    def size(self):
+        return self.__size
+
+    @size.setter
+    def size(self, value):
+        self.__size = value
+
     def generate(self):
         # TODO DELETE
-        self.board = [["•"] * self.size for _ in range(self.size)]
+        self.__board = [["•"] * self.size for _ in range(self.size)]
 
-    def display(self):
+    def __str__(self):
         """Displays the board in a grid"""
-        # TODO DELETE
+        board = ""
 
         nums = [i for i in range(1, self.size + 1)]
 
-        print(" ", end="")
-        for i in nums:
-            print(f" {i}", end="")
-        print()
+        board += " "
 
-        for x in range(len(self.board)):
-            print(nums[x], end=" ")
-            for y in range(len(self.board[x])):
-                if (type(self.board[x][y]) == Pawn):
-                    print(self.board[x][y].view(), end=" ")
+        for i in nums:
+            board += f' {i}'
+
+        board += "\n"
+
+        for x in range(len(self.__board)):
+            board += f'{nums[x]} '
+            for y in range(len(self.__board[x])):
+                if (type(self.__board[x][y]) == Pawn):
+                    board += f'{self.__board[x][y]} '
                 else:
-                    print(self.board[x][y], end=" ")
-            print()
+                    board += f'{self.__board[x][y]} '
+            board += "\n"
+
+        return board
 
     def start(self):
         x = (self.size // 2) - 1
@@ -39,15 +52,15 @@ class Board:
         self.place(x + 1, y + 1, Pawn(0))
 
     def place(self, x, y, pawn):
-        self.board[x][y] = pawn
+        self.__board[x][y] = pawn
         self.check(x, y, pawn)
     
     def check(self, func_x, func_y, pawn):
         same = []
-        for x in range(len(self.board)):
-            for y in range(len(self.board)):
-                if (type(self.board[x][y]) == Pawn 
-                and self.board[x][y].color == pawn.color):
+        for x in range(len(self.__board)):
+            for y in range(len(self.__board)):
+                if (type(self.__board[x][y]) == Pawn
+                and self.__board[x][y].color == pawn.color):
                     same.append([x, y])
         for i in range(len(same)):
             xs = same[i][0]
@@ -68,11 +81,11 @@ class Board:
                     self.replace(j, func_y)
             
     def replace(self, x, y):
-        if (type(self.board[x][y]) == Pawn):
-            self.board[x][y].changeColor()
+        if (type(self.__board[x][y]) == Pawn):
+            self.__board[x][y].changeColor()
 
     def isEmpty(self, x, y):
-        return False if (type(self.board[x][y]) == Pawn) else True
+        return False if (type(self.__board[x][y]) == Pawn) else True
 
     def new_pawn(self, pawn):
         """Lets the user input coordinates to place a pawn"""
@@ -113,11 +126,11 @@ class Board:
 
         full = True
 
-        for x in range(len(self.board)):
-            if "•" in self.board[x]:
+        for x in range(len(self.__board)):
+            if "•" in self.__board[x]:
                 full = False
-            for y in range(len(self.board[x])):
-                current_pawn = self.board[x][y]
+            for y in range(len(self.__board[x])):
+                current_pawn = self.__board[x][y]
                 if type(current_pawn) == Pawn:
                     if current_pawn.color == 0:
                         white_count += 1
