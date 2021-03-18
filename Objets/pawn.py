@@ -10,11 +10,13 @@ class Pawn:
     def color(self, value):
         self.__color = value
 
-    def changeColor(self):
+    def change_color(self):
         if self.color == 0:
             self.color = 1
         else:
             self.color = 0
 
     def __str__(self):
-        return "o" if self.color == 0 else "x"
+        if self.color == 0:
+            return "o"
+        return "x"
