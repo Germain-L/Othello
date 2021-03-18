@@ -7,7 +7,7 @@ def main():
     whose_turn = True
 
     while True:
-        board.display()
+        print(board)
 
         if whose_turn:
             print("x's turn")
