@@ -2,12 +2,19 @@ from .pawn import Pawn
 from .pawn import Pawn
 
 class Case:
-    def __init__(self):
-        self.pawn = None
+    def __init__(self, pawn = None):
+        self.__pawn = pawn
 
-    def set(self, pawn)
-        self.pawn = pawn
+    @property
+    def pawn(self):
+        return self.__pawn
 
-    def isPawn(self):
-        return False if sel.pawn == null else True
+    @pawn.setter
+    def pawn(self):
+        self.__pawn = pawn
+
+    def containsPawn(self):
+        return False if self.__pawn == None else True
         
+    def __str__(self):
+        return "•" if self.__pawn == None else f'{self.__pawn}'

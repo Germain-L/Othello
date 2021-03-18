@@ -1,7 +1,7 @@
 from .pawn import Pawn
+from .case import Case
 
-
-class Board:
+class Board():
     def __init__(self, size):
         self.size = size
         self.generate()
@@ -17,7 +17,7 @@ class Board:
 
     def generate(self):
         # TODO DELETE
-        self.__board = [["•"] * self.size for _ in range(self.size)]
+        self.__board = [[Case()] * self.size for _ in range(self.size)]
 
     def __str__(self):
         """Displays the board in a grid"""
@@ -52,15 +52,15 @@ class Board:
         self.place(x + 1, y + 1, Pawn(0))
 
     def place(self, x, y, pawn):
-        self.__board[x][y] = pawn
+        self.__board[x][y] = Case(pawn)
         self.check(x, y, pawn)
     
     def check(self, func_x, func_y, pawn):
         same = []
         for x in range(len(self.__board)):
             for y in range(len(self.__board)):
-                if (type(self.__board[x][y]) == Pawn
-                and self.__board[x][y].color == pawn.color):
+                if (self.__board[x][y].containsPawn()
+                and self.__board[x][y].pawn.color == pawn.color):
                     same.append([x, y])
         for i in range(len(same)):
             xs = same[i][0]
@@ -94,8 +94,8 @@ class Board:
             y += paramY
             if (x < 0 or y < 0 or x >= len(self.__board) or y >= len(self.__board)):
                 break
-            if (type(self.__board[x][y]) == Pawn 
-            and self.__board[x][y].color == pawn.color):
+            if (self.__board[x][y].containsPawn()
+            and self.__board[x][y].pawn.color == pawn.color):
                 same.append([x, y])
         if (len(same) > 0):
             for j in range(len(same)):
@@ -108,11 +108,8 @@ class Board:
                 self.replace(x, y)
             
     def replace(self, x, y):
-        if (type(self.__board[x][y]) == Pawn):
-            self.__board[x][y].changeColor()
-
-    def isEmpty(self, x, y):
-        return False if (type(self.__board[x][y]) == Pawn) else True
+        if (self.__board[x][y].containsPawn()):
+            self.__board[x][y].pawn.changeColor()
 
     def new_pawn(self, pawn):
         """Lets the user input coordinates to place a pawn"""
@@ -136,10 +133,10 @@ class Board:
             except ValueError:
                 print(f"Please make sure to enter numbers only")
 
-        while not self.isEmpty(x, y):
+        while self.__board[x][y].containsPawn():
             print("Invalid coordinates pawn already present")
-            y = input('enter x coordinate for new pawn: ')
-            x = input('enter y coordinate for new pawn: ')
+            y = int(input('enter x coordinate for new pawn: '))
+            x = int(input('enter y coordinate for new pawn: '))
 
         self.place(x, y, pawn)
         print(f"Added pawn in {x}, {y}")
