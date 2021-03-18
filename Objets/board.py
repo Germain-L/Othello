@@ -54,18 +54,45 @@ class Board:
             ys = same[i][1]
             if (xs == func_x and ys == func_y):
                 continue
-            xn = xs - func_x
-            yn = ys - func_y
+            # FACTOR
             if (xs == func_x):
-                y_min = same[i][1] if (same[i][1] < func_y) else func_y
-                y_max = same[i][1] if (same[i][1] > func_y) else func_y
-                for j in range(y_min, y_max):
-                    self.replace(func_x, j)
+                y_min = ys if (ys < func_y) else func_y
+                y_max = ys if (ys > func_y) else func_y
+                for j in range(y_min+1, y_max):
+                    self.replace(xs, j)
             if (ys == func_y):
-                x_min = same[i][0] if (same[i][0] < func_x) else func_x
-                x_max = same[i][0] if (same[i][0] > func_x) else func_x
+                x_min = xs if (xs < func_x) else func_x
+                x_max = xs if (xs > func_x) else func_x
                 for j in range(x_min+1, x_max):
-                    self.replace(j, func_y)
+                    self.replace(j, ys)
+            ##
+            if (ys != func_y and xs != func_x):
+                self.checkDiag(-1, -1, pawn)
+                self.checkDiag(-1, +1, pawn)
+                self.checkDiag(+1, -1, pawn)
+                self.checkDiag(+1, +1, pawn)
+
+    def checkDiag(self, paramX, paramY, pawn):
+        x = 0
+        y = 0
+        same = []
+        for i in range(len(self.board)):
+            if (type(self.board[x][y]) == Pawn 
+            and self.board[x][y].color == pawn.color):
+                same.append([x, y])
+            x += paramX
+            y += paramY
+        # self.checkSame(same, x, y)
+    
+    # def checkSame(self, same, x, y):
+    #     x_min = same[i][0] if (same[i][0] < x) else x
+    #     x_max = same[i][0] if (same[i][0] > x) else x
+    #     y_min = same[i][1] if (same[i][1] < y) else y
+    #     y_max = same[i][1] if (same[i][1] > y) else y
+    #     for i in range(x_min+1, x_max):
+    #         for j in range(y_min+1, y_max):
+    #             self.replace(i, j)
+
             
     def replace(self, x, y):
         if (type(self.board[x][y]) == Pawn):
