@@ -18,8 +18,8 @@ def main():
             board.new_pawn(Pawn(0))
 
         whose_turn = not whose_turn
-        # if board.check_end():
-            # break
+        if board.check_end():
+            break
 
 
 if __name__ == '__main__':

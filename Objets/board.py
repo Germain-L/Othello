@@ -72,12 +72,20 @@ class Board():
                 y_min = ys if (ys < func_y) else func_y
                 y_max = ys if (ys > func_y) else func_y
                 for j in range(y_min+1, y_max):
-                    self.replace(xs, j)
+                    if not self.__board[xs][j].containsPawn():
+                        return
+                for j in range(y_min+1, y_max):
+                    if self.__board[xs][j].pawn.color != pawn.color:
+                        self.replace(xs, j)
             if (ys == func_y):
                 x_min = xs if (xs < func_x) else func_x
                 x_max = xs if (xs > func_x) else func_x
                 for j in range(x_min+1, x_max):
-                    self.replace(j, ys)
+                    if not self.__board[j][ys].containsPawn():
+                        return
+                for j in range(x_min+1, x_max):
+                    if self.__board[j][ys].pawn.color != pawn.color:
+                        self.replace(j, ys)
             ##
             if (ys != func_y and xs != func_x):
                 self.checkDiag(-1, -1, func_x, func_y, pawn)
@@ -105,7 +113,17 @@ class Board():
                 y -= paramY
                 if (x == func_x and y == func_y):
                     return
-                self.replace(x, y)
+                if not self.__board[x][y].containsPawn():
+                    return
+            for j in range(len(same)):
+                x = same[j][0]
+                y = same[j][1]
+                x -= paramX
+                y -= paramY
+                if (x == func_x and y == func_y):
+                    return
+                if self.__board[x][y].pawn.color != pawn.color:
+                    self.replace(x, y)
             
     def replace(self, x, y):
         if (self.__board[x][y].containsPawn()):
@@ -138,8 +156,25 @@ class Board():
             y = int(input('enter x coordinate for new pawn: '))
             x = int(input('enter y coordinate for new pawn: '))
 
+            try:
+                x = int(x) - 1
+                y = int(y) - 1
+
+                if x not in allowed or y not in allowed:
+                    print(f"Please make sure to enter numbers between 1 and {self.size}")
+
+            except ValueError:
+                print(f"Please make sure to enter numbers only")
+                
         self.place(x, y, pawn)
         print(f"Added pawn in {x}, {y}")
+
+    def check_full(self):
+        for x in range(len(self.__board)):
+            for y in range(len(self.__board)):
+                if (not self.__board[x][y].containsPawn):
+                    return True
+        return False
 
     def check_end(self):
         contains_white = False
@@ -148,22 +183,17 @@ class Board():
         white_count = 0
         black_count = 0
 
-        full = True
+        full = self.check_full()
 
         for x in range(len(self.__board)):
-            if "•" in self.__board[x]:
-                full = False
             for y in range(len(self.__board[x])):
-                current_pawn = self.__board[x][y]
-                if type(current_pawn) == Pawn:
-                    if current_pawn.color == 0:
+                if self.__board[x][y].containsPawn():
+                    if self.__board[x][y].pawn.color == 0:
                         white_count += 1
                         contains_white = True
-
-                    elif current_pawn.color == 1:
+                    else:
                         black_count += 1
                         contains_black = True
-
         if contains_white and not contains_black:
             print("Blanc gagne")
             return True
@@ -173,11 +203,11 @@ class Board():
             return True
 
         elif full:
-            if contains_white > contains_black:
+            if white_count > black_count:
                 print("Blanc gagne")
                 return True
 
-            elif contains_black > contains_white:
+            elif black_count > white_count:
                 print("Noir gagne")
                 return True
 
