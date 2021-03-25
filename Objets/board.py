@@ -1,7 +1,8 @@
 from .pawn import Pawn
 from .case import Case
 
-class Board():
+
+class Board:
     def __init__(self, size):
         self.size = size
         self.generate()
@@ -35,7 +36,7 @@ class Board():
         for x in range(len(self.__board)):
             board += f'{nums[x]} '
             for y in range(len(self.__board[x])):
-                if (type(self.__board[x][y]) == Pawn):
+                if type(self.__board[x][y]) == Pawn:
                     board += f'{self.__board[x][y]} '
                 else:
                     board += f'{self.__board[x][y]} '
@@ -54,80 +55,80 @@ class Board():
     def place(self, x, y, pawn):
         self.__board[x][y] = Case(pawn)
         self.check(x, y, pawn)
-    
+
     def check(self, func_x, func_y, pawn):
         same = []
         for x in range(len(self.__board)):
             for y in range(len(self.__board)):
-                if (self.__board[x][y].containsPawn()
-                and self.__board[x][y].pawn.color == pawn.color):
+                if (self.__board[x][y].contains_pawn()
+                        and self.__board[x][y].pawn.color == pawn.color):
                     same.append([x, y])
         for i in range(len(same)):
             xs = same[i][0]
             ys = same[i][1]
-            if (xs == func_x and ys == func_y):
+            if xs == func_x and ys == func_y:
                 continue
             # FACTOR
-            if (xs == func_x):
+            if xs == func_x:
                 y_min = ys if (ys < func_y) else func_y
                 y_max = ys if (ys > func_y) else func_y
-                for j in range(y_min+1, y_max):
-                    if not self.__board[xs][j].containsPawn():
+                for j in range(y_min + 1, y_max):
+                    if not self.__board[xs][j].contains_pawn():
                         return
-                for j in range(y_min+1, y_max):
+                for j in range(y_min + 1, y_max):
                     if self.__board[xs][j].pawn.color != pawn.color:
                         self.replace(xs, j)
-            if (ys == func_y):
+            if ys == func_y:
                 x_min = xs if (xs < func_x) else func_x
                 x_max = xs if (xs > func_x) else func_x
-                for j in range(x_min+1, x_max):
-                    if not self.__board[j][ys].containsPawn():
+                for j in range(x_min + 1, x_max):
+                    if not self.__board[j][ys].contains_pawn():
                         return
-                for j in range(x_min+1, x_max):
+                for j in range(x_min + 1, x_max):
                     if self.__board[j][ys].pawn.color != pawn.color:
                         self.replace(j, ys)
             ##
-            if (ys != func_y and xs != func_x):
-                self.checkDiag(-1, -1, func_x, func_y, pawn)
-                self.checkDiag(-1, +1, func_x, func_y, pawn)
-                self.checkDiag(+1, -1, func_x, func_y, pawn)
-                self.checkDiag(+1, +1, func_x, func_y, pawn)
+            if ys != func_y and xs != func_x:
+                self.check_diag(-1, -1, func_x, func_y, pawn)
+                self.check_diag(-1, +1, func_x, func_y, pawn)
+                self.check_diag(+1, -1, func_x, func_y, pawn)
+                self.check_diag(+1, +1, func_x, func_y, pawn)
 
-    def checkDiag(self, paramX, paramY, func_x, func_y, pawn):
+    def check_diag(self, param_x, param_y, func_x, func_y, pawn):
         same = []
         x = func_x
         y = func_y
         for i in range(len(self.__board)):
-            x += paramX
-            y += paramY
-            if (x < 0 or y < 0 or x >= len(self.__board) or y >= len(self.__board)):
+            x += param_x
+            y += param_y
+            if x < 0 or y < 0 or x >= len(self.__board) or y >= len(self.__board):
                 break
-            if (self.__board[x][y].containsPawn()
-            and self.__board[x][y].pawn.color == pawn.color):
+            if (self.__board[x][y].contains_pawn()
+                    and self.__board[x][y].pawn.color == pawn.color):
                 same.append([x, y])
-        if (len(same) > 0):
+        if len(same) > 0:
             for j in range(len(same)):
                 x = same[j][0]
                 y = same[j][1]
-                x -= paramX
-                y -= paramY
-                if (x == func_x and y == func_y):
+                x -= param_x
+                y -= param_y
+                if x == func_x and y == func_y:
                     return
-                if not self.__board[x][y].containsPawn():
+                if not self.__board[x][y].contains_pawn():
                     return
             for j in range(len(same)):
                 x = same[j][0]
                 y = same[j][1]
-                x -= paramX
-                y -= paramY
-                if (x == func_x and y == func_y):
+                x -= param_x
+                y -= param_y
+                if x == func_x and y == func_y:
                     return
                 if self.__board[x][y].pawn.color != pawn.color:
                     self.replace(x, y)
-            
+
     def replace(self, x, y):
-        if (self.__board[x][y].containsPawn()):
-            self.__board[x][y].pawn.changeColor()
+        if self.__board[x][y].contains_pawn():
+            self.__board[x][y].pawn.change_color()
 
     def new_pawn(self, pawn):
         """Lets the user input coordinates to place a pawn"""
@@ -151,7 +152,7 @@ class Board():
             except ValueError:
                 print(f"Please make sure to enter numbers only")
 
-        while self.__board[x][y].containsPawn():
+        while self.__board[x][y].contains_pawn():
             print("Invalid coordinates pawn already present")
             y = int(input('enter x coordinate for new pawn: '))
             x = int(input('enter y coordinate for new pawn: '))
@@ -165,14 +166,14 @@ class Board():
 
             except ValueError:
                 print(f"Please make sure to enter numbers only")
-                
+
         self.place(x, y, pawn)
         print(f"Added pawn in {x}, {y}")
 
     def check_full(self):
         for x in range(len(self.__board)):
             for y in range(len(self.__board)):
-                if (not self.__board[x][y].containsPawn):
+                if not self.__board[x][y].contains_pawn:
                     return True
         return False
 
@@ -187,7 +188,7 @@ class Board():
 
         for x in range(len(self.__board)):
             for y in range(len(self.__board[x])):
-                if self.__board[x][y].containsPawn():
+                if self.__board[x][y].contains_pawn():
                     if self.__board[x][y].pawn.color == 0:
                         white_count += 1
                         contains_white = True
