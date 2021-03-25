@@ -1,6 +1,4 @@
 from .pawn import Pawn
-from .pawn import Pawn
-
 
 class Case:
     def __init__(self, pawn=None):
@@ -11,8 +9,8 @@ class Case:
         return self.__pawn
 
     @pawn.setter
-    def pawn(self, value):
-        self.__pawn = value
+    def pawn(self, pawn):
+        self.__pawn = pawn
 
     def contains_pawn(self):
         if self.pawn is None:
