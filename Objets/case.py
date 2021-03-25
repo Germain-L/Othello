@@ -1,8 +1,9 @@
 from .pawn import Pawn
 from .pawn import Pawn
 
+
 class Case:
-    def __init__(self, pawn = None):
+    def __init__(self, pawn=None):
         self.__pawn = pawn
 
     @property
@@ -10,11 +11,16 @@ class Case:
         return self.__pawn
 
     @pawn.setter
-    def pawn(self):
-        self.__pawn = pawn
+    def pawn(self, value):
+        self.__pawn = value
 
-    def containsPawn(self):
-        return False if self.__pawn == None else True
-        
+    def contains_pawn(self):
+        if self.pawn is None:
+            return False
+        return True
+
     def __str__(self):
-        return "•" if self.__pawn == None else f'{self.__pawn}'
+        if self.contains_pawn():
+            return f'{self.__pawn}'
+
+        return "•"
