@@ -1,5 +1,6 @@
 from .pawn import Pawn
 from .case import Case
+from .slot import Slot
 
 
 class Board:
@@ -8,6 +9,9 @@ class Board:
         self.generate()
         self.start()
 
+        self.__white = []
+        self.__black = []
+
     @property
     def size(self):
         return self.__size
@@ -15,6 +19,20 @@ class Board:
     @size.setter
     def size(self, value):
         self.__size = value
+
+    @property
+    def black(self) -> list:
+        return self.__black
+
+    @property
+    def whites(self) -> list:
+        return self.__white
+
+    def add_black(self, slot):
+        self.black.append(slot)
+
+    def add_white(self, slot):
+        self.whites.append(slot)
 
     def generate(self):
         # TODO DELETE
@@ -89,12 +107,12 @@ class Board:
                         self.replace(j, ys)
             ##
             if ys != func_y and xs != func_x:
-                self.check_diag(-1, -1, func_x, func_y, pawn)
-                self.check_diag(-1, +1, func_x, func_y, pawn)
-                self.check_diag(+1, -1, func_x, func_y, pawn)
-                self.check_diag(+1, +1, func_x, func_y, pawn)
+                self.check_around(-1, -1, func_x, func_y, pawn)
+                self.check_around(-1, +1, func_x, func_y, pawn)
+                self.check_around(+1, -1, func_x, func_y, pawn)
+                self.check_around(+1, +1, func_x, func_y, pawn)
 
-    def check_diag(self, param_x, param_y, func_x, func_y, pawn):
+    def check_around(self, param_x, param_y, func_x, func_y, pawn):
         same = []
         x = func_x
         y = func_y
@@ -126,12 +144,49 @@ class Board:
                 if self.__board[x][y].pawn.color != pawn.color:
                     self.replace(x, y)
 
+    def check_available_germain(self, param_x, param_y, func_x, func_y, pawn):
+        same = []
+        x = func_x
+        y = func_y
+        for i in range(len(self.__board)):
+            x += param_x
+            y += param_y
+            if x < 0 or y < 0 or x >= len(self.__board) or y >= len(self.__board):
+                break
+            if (self.__board[x][y].contains_pawn()
+                    and self.__board[x][y].pawn.color == pawn.color):
+                same.append([x, y])
+        if len(same) > 0:
+            for j in range(len(same)):
+                x = same[j][0]
+                y = same[j][1]
+                x -= param_x
+                y -= param_y
+                if x == func_x and y == func_y:
+                    return
+                if not self.__board[x][y].contains_pawn():
+                    return
+            for j in range(len(same)):
+                x = same[j][0]
+                y = same[j][1]
+                x -= param_x
+                y -= param_y
+                if x == func_x and y == func_y:
+                    return
+                if self.__board[x][y].pawn.color != pawn.color:
+                    self.replace(x, y)
+
+
     def replace(self, x, y):
         if self.__board[x][y].contains_pawn():
             self.__board[x][y].pawn.change_color()
 
     def new_pawn(self, pawn):
         """Lets the user input coordinates to place a pawn"""
+        if pawn.color == 0:
+            for i in self.whites:
+                self.check_if_available(i)
+
 
         allowed = [i for i in range(0, self.size)]
 
@@ -168,7 +223,34 @@ class Board:
                 print(f"Please make sure to enter numbers only")
 
         self.place(x, y, pawn)
+
+        if pawn.color == 0:
+            self.add_white(Slot(x, y, self.size))
+        elif pawn.color == 1:
+            self.add_black(Slot(x, y, self.size))
+
         print(f"Added pawn in {x}, {y}")
+
+    def check_if_available(self, slot):
+        x = slot.x
+        y = slot.y
+        around = []
+        try:
+            tl = Slot(x-1, y-1, self.size)
+            ts = Slot(x, y-1, self.size)
+            tr = Slot(x+1, y - 1, self.size)
+
+            l = Slot(x-1, y, self.size)
+            r = Slot(x+1, y, self.size)
+
+            bl = Slot(x-1, y+1, self.size)
+            bs = Slot(x, y+1, self.size)
+            br = (x+1, y+1, self.size)
+
+        except IndexError:
+            print("Pion au bord")
+        for slot in around:
+            print(slot)
 
     def check_full(self):
         for x in range(len(self.__board)):
