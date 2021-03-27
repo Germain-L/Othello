@@ -1,3 +1,6 @@
+from .colours import Colours
+
+
 class Pawn:
     def __init__(self, color):
         self.color = color
@@ -18,5 +21,5 @@ class Pawn:
 
     def __str__(self):
         if self.color == 0:
-            return "o"
-        return "x"
+            return f"{Colours.RED}o{Colours.ENDC}"
+        return f"{Colours.GREEN}x{Colours.ENDC}"
