@@ -176,59 +176,41 @@ class Board:
                 if self.__board[x][y].pawn.color != pawn.color:
                     self.replace(x, y)
 
-
     def replace(self, x, y):
         if self.__board[x][y].contains_pawn():
             self.__board[x][y].pawn.change_color()
 
+    def input_single_coord(self, coord_name, available_coords) -> int:
+            coord = ""
+
+            try:
+                # try to enter a number and convert it to an int
+                coord = int(input(f"Enter {coord_name} coordinate: "))
+
+                # check if entered coord fits in the board
+                if coord not in available_coords:
+                    raise IndexError
+
+                # return wiht -1 as list start at 0 and board start at 1
+                return coord - 1
+            except ValueError:
+                print(f"Please make sure to enter integer only, {coord} is not an integer")
+
+            except IndexError:
+                print(f"{coord} is not valid, enter value in {available_coords}")
+
+            # if we made it here then that means an error has occured
+            # therefor we restart the function (recursion)
+            return self.input_single_coord(coord_name, available_coords)
+
     def new_pawn(self, pawn):
-        """Lets the user input coordinates to place a pawn"""
-        if pawn.color == 0:
-            for i in self.whites:
-                self.check_if_available(i)
+        available_coord = [n for n in range(self.size)]
+        x = self.input_single_coord("x", available_coord)
+        y = self.input_single_coord("y", available_coord)
 
-
-        allowed = [i for i in range(0, self.size)]
-
-        y = ""
-        x = ""
-
-        while x not in allowed or y not in allowed:
-            y = input('enter x coordinate for new pawn: ')
-            x = input('enter y coordinate for new pawn: ')
-
-            try:
-                x = int(x) - 1
-                y = int(y) - 1
-
-                if x not in allowed or y not in allowed:
-                    print(f"Please make sure to enter numbers between 1 and {self.size}")
-
-            except ValueError:
-                print(f"Please make sure to enter numbers only")
-
-        while self.__board[x][y].contains_pawn():
-            print("Invalid coordinates pawn already present")
-            y = int(input('enter x coordinate for new pawn: '))
-            x = int(input('enter y coordinate for new pawn: '))
-
-            try:
-                x = int(x) - 1
-                y = int(y) - 1
-
-                if x not in allowed or y not in allowed:
-                    print(f"Please make sure to enter numbers between 1 and {self.size}")
-
-            except ValueError:
-                print(f"Please make sure to enter numbers only")
-
-        self.place(x, y, pawn)
-
-        if pawn.color == 0:
-            self.add_white(Slot(x, y, self.size))
-        elif pawn.color == 1:
-            self.add_black(Slot(x, y, self.size))
-
+        # we have to swap x  and y,
+        # because our board has rows and cols swapped
+        self.place(y, x, pawn)
         print(f"Added pawn in {x}, {y}")
 
     def check_if_available(self, slot):
