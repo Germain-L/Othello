@@ -2,9 +2,11 @@ class ColoursCodes:
     # this class contains colour codes to be used when printing in terminals
     GREEN = '\033[92m'
     RED = '\033[91m'
+    PURPLE = '\033[95m'
 
     # END ends colours and resets to default
     END = '\033[0m'
+
 
 class Pawn:
     def __init__(self, color):

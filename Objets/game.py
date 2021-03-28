@@ -1,6 +1,7 @@
 from .board import Board
 from .pawn import Pawn, ColoursCodes
 
+
 class Game:
     def __init__(self):
         self.input_size()
@@ -40,7 +41,6 @@ class Game:
             print(f"{ColoursCodes.GREEN} x's turn {ColoursCodes.END}")
 
             self.game_board.new_pawn(Pawn(0))
-
         elif not self.is_x_turn:
             # print play's turn in corresponding color
             print(f"{ColoursCodes.RED} o's turn {ColoursCodes.END}")
@@ -76,3 +76,4 @@ class Game:
             print("o WINS")
         else:
             print("DRAW")
+
