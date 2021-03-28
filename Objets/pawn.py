@@ -6,7 +6,6 @@ class ColoursCodes:
     # END ends colours and resets to default
     END = '\033[0m'
 
-
 class Pawn:
     def __init__(self, color):
         self.available_color = [0, 1]

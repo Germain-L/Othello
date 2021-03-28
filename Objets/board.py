@@ -1,7 +1,6 @@
 from .case import Case
 from .pawn import Pawn
 
-
 class Board:
     def __init__(self, size):
 
@@ -16,7 +15,7 @@ class Board:
 
     # -> list[list[Case]] is mostly used when writing the code as it helps with autocompletion
     @property
-    def board(self) -> list[list[Case]]:
+    def board(self):
         return self.__board
 
     @property
@@ -25,7 +24,7 @@ class Board:
         self.__o_pawns = []
 
         # iterate over board
-        for y in self.board:
+        for y in self.__board:
             for x in y:
 
                 # if x contains a pawn and is of colour 1 then add it to the list
@@ -41,7 +40,7 @@ class Board:
         self.__x_pawns = []
 
         # iterate over board
-        for y in self.board:
+        for y in self.__board:
             for x in y:
 
                 # if x contains a pawn and is of colour 0 then add it to the list
@@ -87,48 +86,24 @@ class Board:
                     self.x_pawns.append(row[x])
 
             # add the new row to the board
-            self.board.append(row)
+            self.__board.append(row)
 
     def check(self, func_x, func_y, pawn):
-        same = []
-        for x in range(len(self.__board)):
-            for y in range(len(self.__board)):
-                if (self.__board[x][y].contains_pawn()
-                        and self.__board[x][y].pawn.color == pawn.color):
-                    same.append([x, y])
-        for i in range(len(same)):
-            xs = same[i][0]
-            ys = same[i][1]
-            if xs == func_x and ys == func_y:
-                continue
-            # FACTOR
-            if xs == func_x:
-                y_min = ys if (ys < func_y) else func_y
-                y_max = ys if (ys > func_y) else func_y
-                for j in range(y_min + 1, y_max):
-                    if not self.__board[xs][j].contains_pawn():
-                        return
-                for j in range(y_min + 1, y_max):
-                    if self.__board[xs][j].pawn.color != pawn.color:
-                        self.replace(xs, j)
-            if ys == func_y:
-                x_min = xs if (xs < func_x) else func_x
-                x_max = xs if (xs > func_x) else func_x
-                for j in range(x_min + 1, x_max):
-                    if not self.__board[j][ys].contains_pawn():
-                        return
-                for j in range(x_min + 1, x_max):
-                    if self.__board[j][ys].pawn.color != pawn.color:
-                        self.replace(j, ys)
-            ##
-            if ys != func_y and xs != func_x:
-                self.check_around(-1, -1, func_x, func_y, pawn)
-                self.check_around(-1, +1, func_x, func_y, pawn)
-                self.check_around(+1, -1, func_x, func_y, pawn)
-                self.check_around(+1, +1, func_x, func_y, pawn)
+        reversed_pawns = []
+        reversed_pawns.extend(self.check_around(0, +1, func_x, func_y, pawn))
+        reversed_pawns.extend(self.check_around(0, -1, func_x, func_y, pawn))
+        reversed_pawns.extend(self.check_around(+1, 0, func_x, func_y, pawn))
+        reversed_pawns.extend(self.check_around(-1, 0, func_x, func_y, pawn))
+        reversed_pawns.extend(self.check_around(-1, -1, func_x, func_y, pawn))
+        reversed_pawns.extend(self.check_around(-1, +1, func_x, func_y, pawn))
+        reversed_pawns.extend(self.check_around(+1, -1, func_x, func_y, pawn))
+        reversed_pawns.extend(self.check_around(+1, +1, func_x, func_y, pawn))
+        for pawn in reversed_pawns:
+            self.replace(pawn[0], pawn[1])
 
     def check_around(self, param_x, param_y, func_x, func_y, pawn):
         same = []
+        response = []
         x = func_x
         y = func_y
         for i in range(len(self.__board)):
@@ -146,25 +121,34 @@ class Board:
                 x -= param_x
                 y -= param_y
                 if x == func_x and y == func_y:
-                    return
+                    return response
                 if not self.__board[x][y].contains_pawn():
-                    return
+                    return response
             for j in range(len(same)):
                 x = same[j][0]
                 y = same[j][1]
                 x -= param_x
                 y -= param_y
                 if x == func_x and y == func_y:
-                    return
+                    return response
                 if self.__board[x][y].pawn.color != pawn.color:
-                    self.replace(x, y)
+                    response.append([x, y])
+        return response
 
     def check_if_eat(self, x, y) -> bool:
-        eats = False
-
-        # change eats to true if a pawn gets eaten if the player plays this x, y
-
-        return eats
+        eated_pawns = []
+        eated_pawns.extend(self.check_around(0, +1, func_x, func_y, pawn))
+        eated_pawns.extend(self.check_around(0, -1, func_x, func_y, pawn))
+        eated_pawns.extend(self.check_around(+1, 0, func_x, func_y, pawn))
+        eated_pawns.extend(self.check_around(-1, 0, func_x, func_y, pawn))
+        eated_pawns.extend(self.check_around(-1, -1, func_x, func_y, pawn))
+        eated_pawns.extend(self.check_around(-1, +1, func_x, func_y, pawn))
+        eated_pawns.extend(self.check_around(+1, -1, func_x, func_y, pawn))
+        eated_pawns.extend(self.check_around(+1, +1, func_x, func_y, pawn))
+        if (len(eated_pawns) > 0):
+            return False
+        else:
+            return True
 
     def get_availble_plays_around_pawn(self, color):
         # this represent a list of available coords that the player can play
@@ -187,7 +171,7 @@ class Board:
 
                     # we don't add pawn we're currently looking at
                     if x != case.x and y != case.y:
-                        around_current_case.append(self.board[x][y])
+                        around_current_case.append(self.__board[x][y])
 
             # iterate over possible plays, to check if they eat opponent's pawns
             for possible_play in around_current_case:
@@ -235,7 +219,7 @@ class Board:
         self.place(x, y, pawn)
 
     def place(self, x, y, pawn):
-        self.board[x][y].pawn = pawn
+        self.__board[x][y].pawn = pawn
         self.check(x, y, pawn)
 
     def replace(self, x, y):
@@ -252,7 +236,7 @@ class Board:
             for x in range(self.size):
 
                 # get case at x, y
-                current_case = self.board[x][y]
+                current_case = self.__board[x][y]
 
                 # if x, y does not contain a pawn then board is not full
                 if not current_case.contains_pawn():

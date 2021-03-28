@@ -1,14 +1,21 @@
 from .board import Board
 from .pawn import Pawn, ColoursCodes
 
-
 class Game:
-    def __init__(self, size):
+    def __init__(self):
+        self.input_size()
         # initialise the board with its size
-        self.game_board = Board(size)
+        self.game_board = Board(self.__size)
 
         # x starts the game
         self.is_x_turn = True
+
+    def input_size(self):
+        try:
+            entered_size = int(input("Enter board entered_size : "))
+            self.__size = entered_size
+        except ValueError:
+            print("Make sure to enter a whole number")
 
     @property
     def game_board(self):
